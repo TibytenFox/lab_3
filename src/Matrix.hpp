@@ -68,6 +68,9 @@ public:
 
 template <class T>
 class SquareMatrix : public RectangularMatrix<T> {
+private:
+	using RectangularMatrix<T>::getRows;
+	using RectangularMatrix<T>::getColumns;
 public:
     // ---------- Constructors ----------
     SquareMatrix();                                          
@@ -83,7 +86,7 @@ public:
     SquareMatrix<T>& operator=(SquareMatrix<T>&& other) noexcept;
 
     // ---------- Auxiliary ----------
-    int getSize() const { return this->GetRows(); }           // rows == columns
+    int getSize() const { return this->getRows(); }           // rows == columns
 };
 
 #include "Matrix.tpp"

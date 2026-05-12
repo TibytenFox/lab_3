@@ -37,7 +37,7 @@ RectangularMatrix<T>::RectangularMatrix(int rows, int cols) : rows(rows), rows_c
             builder.Append(T());
         }
         MutableArraySequence<T>* builtRow = builder.Build();
-        this->rows[i] = *builtRow;   // deep copy via MutableArraySequence copy assignment
+        this->rows[i] = *builtRow;   
         delete builtRow;
     }
 }
@@ -59,7 +59,7 @@ RectangularMatrix<T>::RectangularMatrix(RectangularMatrix<T>&& other) noexcept
 template <class T>
 RectangularMatrix<T>& RectangularMatrix<T>::operator=(const RectangularMatrix<T>& other) {
     if (this != &other) {
-        rows = other.rows;   // deep copy
+        rows = other.rows;   
         rows_cnt = other.rows_cnt;
         cols_cnt = other.cols_cnt;
     }
@@ -96,12 +96,12 @@ const T& RectangularMatrix<T>::get(int row, int col) const {
 
 template <class T>
 T& RectangularMatrix<T>::operator()(int row, int col) {
-    return Get(row, col);
+    return get(row, col);
 }
 
 template <class T>
 const T& RectangularMatrix<T>::operator()(int row, int col) const {
-    return Get(row, col);
+    return get(row, col);
 }
 
 // ---------- RectangularMatrix: elementary row operations ----------
@@ -125,10 +125,6 @@ template <class T>
 void RectangularMatrix<T>::addRowMultiple(int targetRow, int sourceRow, T factor) {
     validateRowIndex(targetRow);
     validateRowIndex(sourceRow);
-    if (targetRow == sourceRow) {
-        // Optional: could be considered an error since it would overwrite.
-        // We'll just do the operation.
-    }
     for (int j = 0; j < cols_cnt; ++j)
         rows[targetRow][j] += factor * rows[sourceRow][j];
 }
@@ -252,7 +248,7 @@ SquareMatrix<T>::SquareMatrix(SquareMatrix<T>&& other) noexcept : RectangularMat
 
 template <class T>
 SquareMatrix<T>::SquareMatrix(const RectangularMatrix<T>& other) : RectangularMatrix<T>(other) {
-    if (other.GetRows() != other.GetColumns())
+    if (other.getRows() != other.getColumns())
         throw RunTimeError("SquareMatrix: rectangular matrix is not square");
 }
 

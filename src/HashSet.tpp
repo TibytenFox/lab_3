@@ -1,3 +1,4 @@
+#include <iostream>
 #include "HashSet.hpp"
 #include "sequence/Exceptions.hpp"
 
@@ -64,20 +65,10 @@ IEnumerator<Key>* HashSet<Key, Hash>::GetEnumerator() const {
 }
 
 template <class Key, class Hash>
-HashSet<Key, Hash>::HashSet() : num_elements_(0), buckets_(DEFAULT_CAPACITY) {
-	for (size_t i = 0; i < buckets_.GetCapacity(); ++i) {
-		LinkedList<Key> empty;
-		buckets_.Append(empty);
-	}
-}
+HashSet<Key, Hash>::HashSet() : num_elements_(0), buckets_(DEFAULT_CAPACITY) {}
 
 template <class Key, class Hash>
-HashSet<Key, Hash>::HashSet(int capacity) : num_elements_(0), buckets_(capacity) {
-	for (size_t i = 0; i < buckets_.GetCapacity(); ++i) {
-		LinkedList<Key> empty;
-		buckets_.Append(empty);
-	}
-}
+HashSet<Key, Hash>::HashSet(int capacity) : num_elements_(0), buckets_(capacity) {}
 
 template <class Key, class Hash>
 HashSet<Key, Hash>::HashSet(const HashSet<Key, Hash>& other) : num_elements_(other.num_elements_), buckets_(other.buckets_) {}
@@ -91,7 +82,7 @@ bool HashSet<Key, Hash>::add(const Key& element) {
 	num_elements_++;
 
 	if (static_cast<double>(num_elements_) / buckets_.GetLength() > 0.75) {
-		rehash(buckets_.GetLength() * 2);
+		this->rehash(buckets_.GetLength() * 2);
 	}
 	return true;
 }
@@ -270,9 +261,8 @@ void HashSet<Key, Hash>::rehash(size_t new_size) {
 	MutableArraySequence<LinkedList<Key>> new_buckets(new_size);
 	for (size_t i = 0; i < buckets_.GetLength(); ++i) {
 		IEnumerator<Key>* en = buckets_[i].GetEnumerator();
-		new_buckets.Append(LinkedList<Key>());
 		while (en->MoveNext()) {
-			size_t new_index = hasher_(en->GetCurrent()) % new_buckets.GetCapacity();
+			size_t new_index = hasher_(en->GetCurrent()) % new_buckets.GetLength();
 			new_buckets[new_index].Append(en->GetCurrent());
 		}
 	}

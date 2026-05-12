@@ -12,6 +12,10 @@ FetchContent_MakeAvailable(data_structures)
 # ----------------------------------------------------------------------------
 
 # Ваша программа
-add_executable(my_app main.cpp)
-target_link_libraries(my_app PRIVATE sequence)
-target_compile_features(my_app PRIVATE cxx_std_17)
+add_executable(app_set main_set.cpp)
+target_link_libraries(app_set PRIVATE sequence)
+target_compile_features(app_set PRIVATE cxx_std_17)
+
+add_executable(app_matrix main_matrix.cpp)
+target_link_libraries(app_matrix PRIVATE sequence)
+target_compile_features(app_matrix PRIVATE cxx_std_17)
