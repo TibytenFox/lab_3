@@ -252,6 +252,12 @@ SquareMatrix<T>::SquareMatrix(const RectangularMatrix<T>& other) : RectangularMa
         throw RunTimeError("SquareMatrix: rectangular matrix is not square");
 }
 
+template <class T>
+void SquareMatrix<T>::validateSameSize(const SquareMatrix<T>& other) const {
+    if (this->getSize() != other.getSize())
+        throw RunTimeError("Matrix: dimensions must match for this operation");
+}
+
 // ---------- SquareMatrix: assignment ----------
 
 template <class T>
@@ -267,5 +273,66 @@ SquareMatrix<T>& SquareMatrix<T>::operator=(SquareMatrix<T>&& other) noexcept {
     if (this != &other) {
         RectangularMatrix<T>::operator=(std::move(other));
     }
+    return *this;
+}
+
+// ---------- SquareMatrix: arithmetic ----------
+
+template <class T>
+SquareMatrix<T> SquareMatrix<T>::operator+(const SquareMatrix<T>& other) const {
+    validateSameSize(other);
+    SquareMatrix<T> result(this->getSize());
+    for (int i = 0; i < this->getSize(); ++i) {
+        for (int j = 0; j < this->getSize(); ++j) {
+            result(i, j) = (*this)(i, j) + other(i, j);
+        }
+    }
+    return result;
+}
+
+template <class T>
+SquareMatrix<T> SquareMatrix<T>::operator*(const SquareMatrix<T>& other) const {
+    if (this->getSize() != other.getSize()) {
+        throw RunTimeError("Matrix multiplication: incompatible dimensions");
+    }
+    SquareMatrix<T> result(this->getSize());
+    for (int i = 0; i < this->getSize(); ++i) {
+        for (int j = 0; j < this->getSize(); ++j) {
+            T sum = T();
+            for (int k = 0; k < this->getSize(); ++k)
+                sum += (*this)(i, k) * other(k, j);
+            result(i, j) = sum;
+        }
+    }
+    return result;
+}
+
+template <class T>
+SquareMatrix<T> SquareMatrix<T>::operator*(T scalar) const {
+    SquareMatrix<T> result(this->getSize());
+    for (int i = 0; i < this->getSize(); ++i) {
+        for (int j = 0; j < this->getSize(); ++j) {
+            result(i, j) = (*this)(i, j) * scalar;
+        }
+    }
+    return result;
+}
+
+// ---------- SquarerMatrix: mutating arithmetic ----------
+
+template <class T>
+SquareMatrix<T>& SquareMatrix<T>::addInPlace(const SquareMatrix<T>& other) {
+    validateSameDimensions(other);
+    for (int i = 0; i < this->getSize(); ++i)
+        for (int j = 0; j < this->getSize(); ++j)
+            (*this)(i, j) += other(i, j);
+    return *this;
+}
+
+template <class T>
+SquareMatrix<T>& SquareMatrix<T>::multiplyInPlace(T scalar) {
+    for (int i = 0; i < this->getSize(); ++i)
+        for (int j = 0; j < this->getSize(); ++j)
+            (*this)(i, j) *= scalar;
     return *this;
 }

@@ -71,6 +71,8 @@ class SquareMatrix : public RectangularMatrix<T> {
 private:
 	using RectangularMatrix<T>::getRows;
 	using RectangularMatrix<T>::getColumns;
+protected:
+    void validateSameSize(const SquareMatrix<T>& other) const;
 public:
     // ---------- Constructors ----------
     SquareMatrix();                                          
@@ -84,6 +86,15 @@ public:
     // ---------- Assignment ----------
     SquareMatrix<T>& operator=(const SquareMatrix<T>& other);
     SquareMatrix<T>& operator=(SquareMatrix<T>&& other) noexcept;
+
+    // ---------- Arithmetic (returns new square matrix) ----------
+    SquareMatrix<T> operator+(const SquareMatrix<T>& other) const;
+    SquareMatrix<T> operator*(const SquareMatrix<T>& other) const;   // matrix multiplication
+    SquareMatrix<T> operator*(T scalar) const;
+
+    // ---------- Mutating arithmetic ----------
+    SquareMatrix<T>& addInPlace(const SquareMatrix<T>& other);
+    SquareMatrix<T>& multiplyInPlace(T scalar);
 
     // ---------- Auxiliary ----------
     int getSize() const { return this->getRows(); }           // rows == columns

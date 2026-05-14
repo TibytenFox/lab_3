@@ -26,3 +26,9 @@ target_link_libraries(run_tests_set PRIVATE sequence)
 
 enable_testing()
 add_test(NAME SetTests COMMAND run_tests_set)
+
+add_executable(run_tests_matrix test_matrix.cpp)
+target_link_libraries(run_tests_matrix PRIVATE sequence)
+
+enable_testing()
+add_test(NAME MatrixTests COMMAND run_tests_matrix)
