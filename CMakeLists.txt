@@ -11,7 +11,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(data_structures)
 # ----------------------------------------------------------------------------
 
-# Ваша программа
+# Программа
 add_executable(app_set main_set.cpp)
 target_link_libraries(app_set PRIVATE sequence)
 target_compile_features(app_set PRIVATE cxx_std_17)
@@ -19,3 +19,10 @@ target_compile_features(app_set PRIVATE cxx_std_17)
 add_executable(app_matrix main_matrix.cpp)
 target_link_libraries(app_matrix PRIVATE sequence)
 target_compile_features(app_matrix PRIVATE cxx_std_17)
+
+# Тесты
+add_executable(run_tests_set test_set.cpp)
+target_link_libraries(run_tests_set PRIVATE sequence)
+
+enable_testing()
+add_test(NAME SetTests COMMAND run_tests_set)

@@ -29,9 +29,11 @@ public:
 
 	HashSet();
 	explicit HashSet(int capacity);
+	HashSet(Key* items, int count);
 	HashSet(const HashSet<Key, Hash>& other);
-	HashSet(HashSet<Key, Hash>&& other) noexcept = default;
-	HashSet<Key, Hash>& operator=(HashSet<Key, Hash>&& other) noexcept = default;
+	HashSet<Key, Hash>& operator=(const HashSet<Key, Hash>& other);
+	HashSet(HashSet<Key, Hash>&& other) noexcept;
+	HashSet<Key, Hash>& operator=(HashSet<Key, Hash>&& other) noexcept;
 	~HashSet() = default;
 
 	bool add(const Key& element);

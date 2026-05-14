@@ -5,7 +5,7 @@
 #include "sequence/Exceptions.hpp"
 
 // ----------------------------------------------------------------------
-// Value reading helpers (type specific) – just like in Matrix tester
+// Value reading helpers 
 // ----------------------------------------------------------------------
 template<typename T> T readValue(const std::string& prompt);
 
@@ -65,13 +65,13 @@ void printMenu() {
 }
 
 // ----------------------------------------------------------------------
-// Unified template‑based tester – exactly like matrixTypeMenu
+// Unified template‑based 
 // ----------------------------------------------------------------------
 template <
     typename Key,
     typename Hash = std::hash<Key>,
-    Key(*MapFunc)(Key) = nullptr,       // function pointer for map
-    bool(*WhereFunc)(Key) = nullptr     // function pointer for where
+    Key(*MapFunc)(Key) = nullptr,       
+    bool(*WhereFunc)(Key) = nullptr     
 >
 void setTypeMenu() {
     HashSet<Key, Hash> A, B, C;
@@ -302,7 +302,7 @@ void setTypeMenu() {
 }
 
 // ----------------------------------------------------------------------
-// Type selection (same structure as Matrix tester)
+// Type selection 
 // ----------------------------------------------------------------------
 void printTypes() {
     std::cout << "\nPlease choose type of HashSet:" << std::endl;

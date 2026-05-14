@@ -7,7 +7,7 @@
 // ----------------------------------------------------------------------
 // Generic matrix printers
 // ----------------------------------------------------------------------
-template<typename T>
+template <class T>
 void printMatrix(const RectangularMatrix<T>& mat) {
     int r = mat.getRows();
     int c = mat.getColumns();
@@ -19,7 +19,7 @@ void printMatrix(const RectangularMatrix<T>& mat) {
     }
 }
 
-template<typename T>
+template <class T>
 void printMatrix(const SquareMatrix<T>& mat) {
     printMatrix(static_cast<const RectangularMatrix<T>&>(mat));
 }
@@ -27,7 +27,7 @@ void printMatrix(const SquareMatrix<T>& mat) {
 // ----------------------------------------------------------------------
 // Value reading helpers (type specific)
 // ----------------------------------------------------------------------
-template<typename T> T readValue(const std::string& prompt);
+template <class T> T readValue(const std::string& prompt);
 
 template<> int readValue<int>(const std::string& prompt) {
     return Utilities::readInt(prompt);
@@ -42,7 +42,7 @@ template<> Complex readValue<Complex>(const std::string& prompt) {
 // ----------------------------------------------------------------------
 // Interactive menu for a given element type T
 // ----------------------------------------------------------------------
-template<typename T>
+template <class T>
 void matrixTypeMenu() {
     RectangularMatrix<T>* A = nullptr;
     SquareMatrix<T>* B = nullptr;
@@ -328,8 +328,8 @@ void matrixTypeMenu() {
 // ----------------------------------------------------------------------
 void printTypeMenu() {
     std::cout << "\nPlease choose element type:" << std::endl;
-    std::cout << "1. int" << std::endl;
-    std::cout << "2. double" << std::endl;
+    std::cout << "1. Int" << std::endl;
+    std::cout << "2. Double" << std::endl;
     std::cout << "3. Complex" << std::endl;
     std::cout << "0. Exit" << std::endl;
 }

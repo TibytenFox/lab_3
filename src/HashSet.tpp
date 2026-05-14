@@ -71,19 +71,48 @@ template <class Key, class Hash>
 HashSet<Key, Hash>::HashSet(int capacity) : num_elements_(0), buckets_(capacity) {}
 
 template <class Key, class Hash>
+HashSet<Key, Hash>::HashSet(Key* items, int count) : num_elements_(0), buckets_((DEFAULT_CAPACITY > count) ? DEFAULT_CAPACITY : count) {
+	for (int i = 0; i < count; ++i) this->add(items[i]);
+}
+
+template <class Key, class Hash>
 HashSet<Key, Hash>::HashSet(const HashSet<Key, Hash>& other) : num_elements_(other.num_elements_), buckets_(other.buckets_) {}
+
+template <class Key, class Hash>
+HashSet<Key, Hash>& HashSet<Key, Hash>::operator=(const HashSet<Key, Hash>& other) {
+    if (this != &other) { 
+        num_elements_ = other.num_elements_; 
+        buckets_ = other.buckets_; 
+    }
+    return *this;
+}
+
+template <class Key, class Hash>
+HashSet<Key, Hash>::HashSet(HashSet<Key, Hash>&& other) noexcept {
+	num_elements_ = other.num_elements_;
+	buckets_ = std::move(other.buckets_);
+	other.num_elements_ = 0;
+}
+
+template <class Key, class Hash>
+HashSet<Key, Hash>& HashSet<Key, Hash>::operator=(HashSet<Key, Hash>&& other) noexcept {
+	num_elements_ = other.num_elements_;
+	buckets_ = std::move(other.buckets_);
+	other.num_elements_ = 0;
+
+	return *this;
+}
 
 template <class Key, class Hash>
 bool HashSet<Key, Hash>::add(const Key& element) {
 	if (this->contains(element)) return false;
+	if (static_cast<double>(num_elements_) / buckets_.GetLength() > 0.75) {
+		this->rehash(buckets_.GetLength() * 2);
+	}
 
 	size_t hashed = hasher_(element) % buckets_.GetLength();
 	buckets_[hashed].Append(element);
 	num_elements_++;
-
-	if (static_cast<double>(num_elements_) / buckets_.GetLength() > 0.75) {
-		this->rehash(buckets_.GetLength() * 2);
-	}
 	return true;
 }
 
