@@ -1,8 +1,6 @@
 #include "Matrix.hpp"
 #include <sequence/Exceptions.hpp>   
 
-// ---------- RectangularMatrix: helpers ----------
-
 template <class T>
 void RectangularMatrix<T>::validateRowIndex(int index) const {
     if (index < 0 || index >= rows_cnt) 
@@ -20,8 +18,6 @@ void RectangularMatrix<T>::validateSameDimensions(const RectangularMatrix<T>& ot
     if (rows_cnt != other.rows_cnt || cols_cnt != other.cols_cnt)
         throw RunTimeError("Matrix: dimensions must match for this operation");
 }
-
-// ---------- RectangularMatrix: constructors ----------
 
 template <class T>
 RectangularMatrix<T>::RectangularMatrix() : rows_cnt(0), cols_cnt(0) {}
@@ -54,8 +50,6 @@ RectangularMatrix<T>::RectangularMatrix(RectangularMatrix<T>&& other) noexcept
     other.cols_cnt = 0;
 }
 
-// ---------- RectangularMatrix: assignment ----------
-
 template <class T>
 RectangularMatrix<T>& RectangularMatrix<T>::operator=(const RectangularMatrix<T>& other) {
     if (this != &other) {
@@ -77,8 +71,6 @@ RectangularMatrix<T>& RectangularMatrix<T>::operator=(RectangularMatrix<T>&& oth
     }
     return *this;
 }
-
-// ---------- RectangularMatrix: element access ----------
 
 template <class T>
 T& RectangularMatrix<T>::get(int row, int col) {
@@ -104,8 +96,6 @@ const T& RectangularMatrix<T>::operator()(int row, int col) const {
     return get(row, col);
 }
 
-// ---------- RectangularMatrix: elementary row operations ----------
-
 template <class T>
 void RectangularMatrix<T>::swapRows(int r1, int r2) {
     validateRowIndex(r1);
@@ -128,8 +118,6 @@ void RectangularMatrix<T>::addRowMultiple(int targetRow, int sourceRow, T factor
     for (int j = 0; j < cols_cnt; ++j)
         rows[targetRow][j] += factor * rows[sourceRow][j];
 }
-
-// ---------- RectangularMatrix: elementary column operations ----------
 
 template <class T>
 void RectangularMatrix<T>::swapColumns(int c1, int c2) {
@@ -168,8 +156,6 @@ double RectangularMatrix<T>::norm() const {
     return std::sqrt(sum);
 }
 
-// ---------- RectangularMatrix: arithmetic ----------
-
 template <class T>
 RectangularMatrix<T> RectangularMatrix<T>::operator+(const RectangularMatrix<T>& other) const {
     validateSameDimensions(other);
@@ -204,8 +190,6 @@ RectangularMatrix<T> RectangularMatrix<T>::operator*(T scalar) const {
     return result;
 }
 
-// ---------- RectangularMatrix: mutating arithmetic ----------
-
 template <class T>
 RectangularMatrix<T>& RectangularMatrix<T>::addInPlace(const RectangularMatrix<T>& other) {
     validateSameDimensions(other);
@@ -222,8 +206,6 @@ RectangularMatrix<T>& RectangularMatrix<T>::multiplyInPlace(T scalar) {
             (*this)(i, j) *= scalar;
     return *this;
 }
-
-// ---------- SquareMatrix: constructors ----------
 
 template <class T>
 SquareMatrix<T>::SquareMatrix() : RectangularMatrix<T>() {}
@@ -258,8 +240,6 @@ void SquareMatrix<T>::validateSameSize(const SquareMatrix<T>& other) const {
         throw RunTimeError("Matrix: dimensions must match for this operation");
 }
 
-// ---------- SquareMatrix: assignment ----------
-
 template <class T>
 SquareMatrix<T>& SquareMatrix<T>::operator=(const SquareMatrix<T>& other) {
     if (this != &other) {
@@ -275,8 +255,6 @@ SquareMatrix<T>& SquareMatrix<T>::operator=(SquareMatrix<T>&& other) noexcept {
     }
     return *this;
 }
-
-// ---------- SquareMatrix: arithmetic ----------
 
 template <class T>
 SquareMatrix<T> SquareMatrix<T>::operator+(const SquareMatrix<T>& other) const {
@@ -317,8 +295,6 @@ SquareMatrix<T> SquareMatrix<T>::operator*(T scalar) const {
     }
     return result;
 }
-
-// ---------- SquarerMatrix: mutating arithmetic ----------
 
 template <class T>
 SquareMatrix<T>& SquareMatrix<T>::addInPlace(const SquareMatrix<T>& other) {

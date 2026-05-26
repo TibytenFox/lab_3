@@ -1,12 +1,10 @@
 #include <iostream>
 #include "src/Matrix.hpp"
-#include "src/Types.hpp"
+#include "src/Complex.hpp"
+#include "src/Output.hpp"
 #include "Utilities.hpp"
 #include "sequence/Exceptions.hpp"
 
-// ----------------------------------------------------------------------
-// Generic matrix printers
-// ----------------------------------------------------------------------
 template <class T>
 void printMatrix(const RectangularMatrix<T>& mat) {
     int r = mat.getRows();
@@ -24,9 +22,6 @@ void printMatrix(const SquareMatrix<T>& mat) {
     printMatrix(static_cast<const RectangularMatrix<T>&>(mat));
 }
 
-// ----------------------------------------------------------------------
-// Value reading helpers (type specific)
-// ----------------------------------------------------------------------
 template <class T> T readValue(const std::string& prompt);
 
 template<> int readValue<int>(const std::string& prompt) {
@@ -39,9 +34,6 @@ template<> Complex readValue<Complex>(const std::string& prompt) {
     return Utilities::readComplex(prompt);
 }
 
-// ----------------------------------------------------------------------
-// Interactive menu for a given element type T
-// ----------------------------------------------------------------------
 template <class T>
 void matrixTypeMenu() {
     RectangularMatrix<T>* A = nullptr;
@@ -323,9 +315,6 @@ void matrixTypeMenu() {
     delete B;
 }
 
-// ----------------------------------------------------------------------
-// Type selection
-// ----------------------------------------------------------------------
 void printTypeMenu() {
     std::cout << "\nPlease choose element type:" << std::endl;
     std::cout << "1. Int" << std::endl;

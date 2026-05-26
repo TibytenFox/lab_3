@@ -1,7 +1,7 @@
 // test_matrix.cpp
 #include <iostream>
 #include "src/Matrix.hpp"
-#include "src/Types.hpp"
+#include "src/Complex.hpp"
 #include "sequence/Exceptions.hpp"
 
 #define TEST(name) void name(); \

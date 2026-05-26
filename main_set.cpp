@@ -1,12 +1,13 @@
 #include <iostream>
 #include "Utilities.hpp"
 #include "src/HashSet.hpp"
-#include "src/Types.hpp"
+#include "src/Complex.hpp"
+#include "src/Function.hpp"
+#include "src/String.hpp"
+#include "src/Person.hpp"
+#include "src/Output.hpp"
 #include "sequence/Exceptions.hpp"
 
-// ----------------------------------------------------------------------
-// Value reading helpers 
-// ----------------------------------------------------------------------
 template<typename T> T readValue(const std::string& prompt);
 
 template<> int readValue<int>(const std::string& prompt) {
@@ -18,27 +19,36 @@ template<> double readValue<double>(const std::string& prompt) {
 template<> Complex readValue<Complex>(const std::string& prompt) {
     return Utilities::readComplex(prompt);
 }
+template<> FunctionData readValue<FunctionData>(const std::string& prompt) {
+    return Utilities::readFunction(prompt);
+}
+template<> StringData readValue<StringData>(const std::string& prompt) {
+    return Utilities::readString(prompt);
+}
+template<> Student readValue<Student>(const std::string& prompt) {
+    return Utilities::readStudent(prompt);
+}
 
-// ----------------------------------------------------------------------
-// Mappings and filters (overloaded for each type)
-// ----------------------------------------------------------------------
 int square(int x) { return x * x; }
 bool greaterThanFive(int x) { return x > 5; }
 
 double square(double x) { return x * x; }
 bool greaterThanFive(double x) { return x > 5; }
 
-Complex square(Complex x) {
-    Complex result;
-    result.real = x.real * x.real + x.imaginary * x.imaginary;
-    result.imaginary = 2 * x.real * x.imaginary;
-    return result;
-}
+Complex square(Complex x) { return Complex(x.real * x.real - x.imaginary * x.imaginary, 2 * x.real * x.imaginary); }
 bool isReal(Complex x) { return x.imaginary == 0; }
 
-// ----------------------------------------------------------------------
-// Menu text
-// ----------------------------------------------------------------------
+StringData add_star(StringData s) { return StringData((std::string(s.c_str()) + "*").c_str()); }
+bool len_gt_4(StringData s) { return std::strlen(s.c_str()) > 4; }
+
+FunctionData func_ident(FunctionData f) { return f; }
+bool is_inc_func(FunctionData f) { return f.getPointer() == &Utilities::s_inc; }
+
+Student st_grade_up(Student s) { 
+    return Student(s.GetID(), s.GetFirstName().c_str(), s.GetLastName().c_str(), s.GetGroupName().c_str(), s.GetAverageGrade() + 0.2); 
+}
+bool st_is_good(Student s) { return s.GetAverageGrade() >= 4.0; }
+
 void printMenu() {
     std::cout << "\n===== HashSet Tester (A + B) =====" << std::endl;
     std::cout << " 1. Add to A" << std::endl;
@@ -64,9 +74,6 @@ void printMenu() {
     std::cout << " 0. Exit" << std::endl;
 }
 
-// ----------------------------------------------------------------------
-// Unified template‑based 
-// ----------------------------------------------------------------------
 template <
     typename Key,
     typename Hash = std::hash<Key>,
@@ -83,7 +90,7 @@ void setTypeMenu() {
         choice = Utilities::readInt("Choose an option: ");
 
         switch (choice) {
-            case 1: {   // Add to A
+            case 1: {
                 try {
                     value = readValue<Key>("Value to add to A: ");
                     if (A.add(value))
@@ -95,7 +102,7 @@ void setTypeMenu() {
                 }
                 break;
             }
-            case 2: {   // Remove from A
+            case 2: {
                 try {
                     value = readValue<Key>("Value to remove from A: ");
                     if (A.remove(value))
@@ -107,7 +114,7 @@ void setTypeMenu() {
                 }
                 break;
             }
-            case 3: {   // Check A contains
+            case 3: {
                 try {
                     value = readValue<Key>("Value to check in A: ");
                     if (A.contains(value))
@@ -119,7 +126,7 @@ void setTypeMenu() {
                 }
                 break;
             }
-            case 4: {   // map for A
+            case 4: {
                 try {
                     C = A.map(MapFunc);
                     std::cout << "Mapped set: ";
@@ -129,7 +136,7 @@ void setTypeMenu() {
                 }
                 break;
             }
-            case 5: {   // where for A
+            case 5: {
                 try {
                     C = A.where(WhereFunc);
                     std::cout << "Filtered set: ";
@@ -139,7 +146,7 @@ void setTypeMenu() {
                 }
                 break;
             }
-            case 6: {   // B subset of A?
+            case 6: {
                 try {
                     if (A.includesSubset(B))
                         std::cout << "B is a subset of A" << std::endl;
@@ -150,7 +157,7 @@ void setTypeMenu() {
                 }
                 break;
             }
-            case 7: {   // Print A
+            case 7: {
                 try {
                     A.printSet();
                 } catch (const Exception& e) {
@@ -158,7 +165,7 @@ void setTypeMenu() {
                 }
                 break;
             }
-            case 8: {   // Add to B
+            case 8: {
                 try {
                     value = readValue<Key>("Value to add to B: ");
                     if (B.add(value))
@@ -170,7 +177,7 @@ void setTypeMenu() {
                 }
                 break;
             }
-            case 9: {   // Remove from B
+            case 9: { 
                 try {
                     value = readValue<Key>("Value to remove from B: ");
                     if (B.remove(value))
@@ -182,7 +189,7 @@ void setTypeMenu() {
                 }
                 break;
             }
-            case 10: {  // Check B contains
+            case 10: {
                 try {
                     value = readValue<Key>("Value to check in B: ");
                     if (B.contains(value))
@@ -194,7 +201,7 @@ void setTypeMenu() {
                 }
                 break;
             }
-            case 11: {  // map for B
+            case 11: {
                 try {
                     C = B.map(MapFunc);
                     std::cout << "Mapped set: ";
@@ -204,7 +211,7 @@ void setTypeMenu() {
                 }
                 break;
             }
-            case 12: {  // where for B
+            case 12: {
                 try {
                     C = B.where(WhereFunc);
                     std::cout << "Filtered set: ";
@@ -214,7 +221,7 @@ void setTypeMenu() {
                 }
                 break;
             }
-            case 13: {  // A subset of B?
+            case 13: {
                 try {
                     if (B.includesSubset(A))
                         std::cout << "A is a subset of B" << std::endl;
@@ -225,7 +232,7 @@ void setTypeMenu() {
                 }
                 break;
             }
-            case 14: {  // Print B
+            case 14: {
                 try {
                     B.printSet();
                 } catch (const Exception& e) {
@@ -233,7 +240,7 @@ void setTypeMenu() {
                 }
                 break;
             }
-            case 15: {  // A | B
+            case 15: {
                 try {
                     C = A | B;
                     std::cout << "Union A | B: ";
@@ -243,7 +250,7 @@ void setTypeMenu() {
                 }
                 break;
             }
-            case 16: {  // A & B
+            case 16: {
                 try {
                     C = A & B;
                     std::cout << "Intersection A & B: ";
@@ -253,7 +260,7 @@ void setTypeMenu() {
                 }
                 break;
             }
-            case 17: {  // A / B
+            case 17: {
                 try {
                     C = A / B;
                     std::cout << "Difference A / B: ";
@@ -263,7 +270,7 @@ void setTypeMenu() {
                 }
                 break;
             }
-            case 18: {  // B / A
+            case 18: {
                 try {
                     C = B / A;
                     std::cout << "Difference B / A: ";
@@ -273,7 +280,7 @@ void setTypeMenu() {
                 }
                 break;
             }
-            case 19: {  // Equality
+            case 19: {
                 try {
                     if (A == B)
                         std::cout << "Sets are equal" << std::endl;
@@ -284,7 +291,7 @@ void setTypeMenu() {
                 }
                 break;
             }
-            case 20: {  // Sizes
+            case 20: {
                 try {
                     std::cout << "Size A: " << A.getSize() << ", Size B: " << B.getSize() << std::endl;
                 } catch (const Exception& e) {
@@ -301,15 +308,9 @@ void setTypeMenu() {
     } while (choice != 0);
 }
 
-// ----------------------------------------------------------------------
-// Type selection 
-// ----------------------------------------------------------------------
 void printTypes() {
     std::cout << "\nPlease choose type of HashSet:" << std::endl;
-    std::cout << "1. Int" << std::endl;
-    std::cout << "2. Double" << std::endl;
-    std::cout << "3. Complex" << std::endl;
-    std::cout << "0. Exit" << std::endl;
+    std::cout << "1. Int\n2. Double\n3. Complex\n4. StringData\n5. FunctionData\n6. Student\n0. Exit" << std::endl;
 }
 
 int main() {
@@ -319,18 +320,13 @@ int main() {
         typeChoice = Utilities::readInt("Your choice: ");
 
         switch (typeChoice) {
-            case 1:
-                setTypeMenu<int, std::hash<int>, square, greaterThanFive>();
-                break;
-            case 2:
-                setTypeMenu<double, std::hash<double>, square, greaterThanFive>();
-                break;
-            case 3:
-                setTypeMenu<Complex, ComplexHasher, square, isReal>();
-                break;
-            case 0:
-                std::cout << "Exiting program. Goodbye!" << std::endl;
-                break;
+            case 1: setTypeMenu<int, std::hash<int>, square, greaterThanFive>(); break;
+            case 2: setTypeMenu<double, std::hash<double>, square, greaterThanFive>(); break;
+            case 3: setTypeMenu<Complex, std::hash<Complex>, square, isReal>(); break;
+            case 4: setTypeMenu<StringData, std::hash<StringData>, add_star, len_gt_4>(); break;
+            case 5: setTypeMenu<FunctionData, std::hash<FunctionData>, func_ident, is_inc_func>(); break;
+            case 6: setTypeMenu<Student, std::hash<Student>, st_grade_up, st_is_good>(); break;
+            case 0: std::cout << "Goodbye!\n"; break;
             default:
                 std::cout << "Invalid option. Please try again." << std::endl;
         }

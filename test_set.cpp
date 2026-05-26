@@ -1,7 +1,10 @@
 #include <iostream>
 #include "sequence/Exceptions.hpp"
 #include "src/HashSet.hpp"
-#include "src/Types.hpp"
+#include "src/Complex.hpp"
+#include "src/String.hpp"
+#include "src/Function.hpp"
+#include "src/Person.hpp"
 
 #define TEST(name) void name(); \
     struct Register_##name { Register_##name() { register_test(name); std::cout << #name << '\n'; } } reg_##name; \
@@ -289,16 +292,114 @@ TEST(HashSet_Enumeration) {
 }
 
 TEST(HashSet_ComplexType) {
-    HashSet<Complex, ComplexHasher> set;
+    HashSet<Complex> set;
 
     ASSERT_EQ(set.add(Complex(1, 2)), true);
     ASSERT_EQ(set.getSize(), 1);
     ASSERT_EQ(set.contains(Complex(1, 2)), true);
 
-    HashSet<Complex, ComplexHasher> another_set;
+    HashSet<Complex> another_set;
     ASSERT_EQ(another_set.add(Complex(1, 2)), true);
     ASSERT_EQ(set == another_set, true);
 } 
+
+int duplicate(int x) { return x * 2; }
+int square(int x) { return x * x; }
+
+TEST(HashSet_StringDataType) {
+    HashSet<StringData> set;
+
+    // Проверка базового добавления и поиска
+    ASSERT_EQ(set.add(StringData("Hello")), true);
+    ASSERT_EQ(set.add(StringData("World")), true);
+    ASSERT_EQ(set.add(StringData("Hello")), false); // Дубликат
+    ASSERT_EQ(set.getSize(), 2);
+
+    ASSERT_EQ(set.contains(StringData("Hello")), true);
+    ASSERT_EQ(set.contains(StringData("C++")), false);
+
+    // Проверка удаления
+    ASSERT_EQ(set.remove(StringData("World")), true);
+    ASSERT_EQ(set.getSize(), 1);
+    ASSERT_EQ(set.contains(StringData("World")), false);
+
+    // Проверка операций множеств на строках
+    StringData arr[] = {StringData("A"), StringData("B")};
+    HashSet<StringData> set2(arr, 2);
+    
+    HashSet<StringData> union_set = set | set2; // {"Hello"} | {"A", "B"}
+    ASSERT_EQ(union_set.getSize(), 3);
+    ASSERT_EQ(union_set.contains(StringData("A")), true);
+    ASSERT_EQ(union_set.contains(StringData("Hello")), true);
+}
+
+TEST(HashSet_FunctionDataType) {
+    HashSet<FunctionData> set;
+
+    FunctionData f1(duplicate, "duplicate");
+    FunctionData f2(square, "square");
+    FunctionData f3(nullptr, "nullptr_func");
+
+    // Добавление
+    ASSERT_EQ(set.add(f1), true);
+    ASSERT_EQ(set.add(f2), true);
+    ASSERT_EQ(set.add(f1), false); // Повторное добавление указателя
+    ASSERT_EQ(set.getSize(), 2);
+
+    // Проверка вызова функций из множества через поиск
+    ASSERT_EQ(set.contains(f1), true);
+    ASSERT_EQ(set.contains(f3), false);
+
+    // Перебор и вызов
+    IEnumerator<FunctionData>* en = set.GetEnumerator();
+    while (en->MoveNext()) {
+        FunctionData f = en->GetCurrent();
+        if (f.getName() == StringData("duplicate")) {
+            ASSERT_EQ(f(5), 10);
+        } else if (f.getName() == StringData("square")) {
+            ASSERT_EQ(f(5), 25);
+        }
+    }
+    delete en;
+}
+
+TEST(HashSet_PersonHierarchyTypes) {
+    // 1. Тестируем Student
+    HashSet<Student> student_set;
+    PersonID id1{100, 12345};
+    PersonID id2{100, 54321};
+
+    Student s1(id1, "Ivan", "Ivanov", "B23-501", 4.75);
+    Student s2(id2, "Petr", "Petrov", "B23-501", 3.8);
+    Student s3(id1, "Ivan_Duplicate_ID", "Ivanov", "M23-501", 5.0); 
+
+    ASSERT_EQ(student_set.add(s1), true);
+    ASSERT_EQ(student_set.add(s2), true);
+    
+    // s3 имеет такой же PersonID (id1), как и s1. 
+    // Поскольку равенство и хэш Person/Student зависят только от ID, это дубликат.
+    ASSERT_EQ(student_set.add(s3), false); 
+    ASSERT_EQ(student_set.getSize(), 2);
+    ASSERT_EQ(student_set.contains(s2), true);
+
+    // 2. Тестируем Teacher
+    HashSet<Teacher> teacher_set;
+    PersonID id3{200, 11111};
+    PersonID id4{200, 22222};
+
+    Teacher t1(id3, "Sidor", "Sidorov", "Department of Computer Science", "Professor");
+    Teacher t2(id4, "Alex", "Alexandrov", "Department of Physics", "Docent");
+
+    ASSERT_EQ(teacher_set.add(t1), true);
+    ASSERT_EQ(teacher_set.add(t2), true);
+    ASSERT_EQ(teacher_set.getSize(), 2);
+    ASSERT_EQ(teacher_set.contains(t1), true);
+
+    // Удаление из коллекции преподавателей
+    ASSERT_EQ(teacher_set.remove(t1), true);
+    ASSERT_EQ(teacher_set.getSize(), 1);
+    ASSERT_EQ(teacher_set.contains(t1), false);
+}
 
 
 int main() {

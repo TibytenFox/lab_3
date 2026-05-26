@@ -20,6 +20,10 @@ add_executable(app_matrix main_matrix.cpp)
 target_link_libraries(app_matrix PRIVATE sequence)
 target_compile_features(app_matrix PRIVATE cxx_std_17)
 
+add_executable(app_queue main_queue.cpp)
+target_link_libraries(app_queue PRIVATE sequence)
+target_compile_features(app_queue PRIVATE cxx_std_17)
+
 # Тесты
 add_executable(run_tests_set test_set.cpp)
 target_link_libraries(run_tests_set PRIVATE sequence)
@@ -32,3 +36,9 @@ target_link_libraries(run_tests_matrix PRIVATE sequence)
 
 enable_testing()
 add_test(NAME MatrixTests COMMAND run_tests_matrix)
+
+add_executable(run_tests_queue test_queue.cpp)
+target_link_libraries(run_tests_queue PRIVATE sequence)
+
+enable_testing()
+add_test(NAME QueueTests COMMAND run_tests_queue)
